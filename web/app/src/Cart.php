@@ -2,10 +2,18 @@
 
 namespace App;
 
+use App\storage\StorageInterface;
+
 class Cart
 {
     /** @var array<CartItem> */
     private $items;
+    private StorageInterface $storage;
+
+    public function __construct(StorageInterface $storage)
+    {
+        $this->storage = $storage;
+    }
 
     public function getItems()
     {
@@ -44,15 +52,15 @@ class Cart
         });
     }
 
-    protected function loadItems()
+    private function loadItems()
     {
         if (is_null($this->items)) {
-            $this->items = isset($_SESSION['cart']) ? unserialize($_SESSION['cart']) : [];
+            $this->items = $this->storage->load();
         }
     }
 
-    protected function saveItems()
+    private function saveItems()
     {
-        $_SESSION['cart'] = serialize($this->items);
+        $this->storage->save($this->items);
     }
 }

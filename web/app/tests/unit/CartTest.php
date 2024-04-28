@@ -5,7 +5,24 @@ namespace AppTest;
 use App\Cart;
 use App\CartItem;
 use App\storage\SessionStorage;
+use App\storage\StorageInterface;
 use PHPUnit\Framework\TestCase;
+
+class MemoryStorage implements StorageInterface
+{
+    /** @var CartItem[] $items */
+    private $items = [];
+
+    public function load(): array
+    {
+        return $this->items;
+    }
+
+    public function save(array $items)
+    {
+        $this->items = $items;
+    }
+}
 
 class CartTest extends TestCase
 {
@@ -13,7 +30,7 @@ class CartTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->cart = new Cart(new SessionStorage('cart'));
+        $this->cart = new Cart(new MemoryStorage());
     }
 
     protected function tearDown(): void

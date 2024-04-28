@@ -2,6 +2,8 @@
 
 namespace App\storage;
 
+use App\CartItem;
+
 class SessionStorage implements StorageInterface
 {
     private string $sessionKey;
@@ -16,7 +18,11 @@ class SessionStorage implements StorageInterface
      * */
     public function load(): array
     {
-        return isset($_SESSION[$this->sessionKey]) ? unserialize($_SESSION[$this->sessionKey]) : [];
+        if (!isset($_SESSION[$this->sessionKey])) {
+            return [];
+        }
+        $items = unserialize($_SESSION[$this->sessionKey]);
+        return array_combine(array_map(function (CartItem $item) { return $item->getId(); }, $items), $items);
     }
 
     /**

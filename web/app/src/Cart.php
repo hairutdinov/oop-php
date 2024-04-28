@@ -6,7 +6,7 @@ use App\storage\StorageInterface;
 
 class Cart
 {
-    /** @var array<CartItem> */
+    /** @var CartItem[] */
     private $items;
     private StorageInterface $storage;
 

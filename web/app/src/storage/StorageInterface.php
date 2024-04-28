@@ -7,12 +7,12 @@ use App\CartItem;
 interface StorageInterface
 {
     /**
-     * @return array<CartItem>|array
+     * @return CartItem[]|array
      * */
     public function load(): array;
 
     /**
-     * @param array<CartItem> $items
+     * @param CartItem[] $items
      * */
     public function save(array $items);
 }

@@ -11,7 +11,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
       libmcrypt-dev \
       libpq-dev\
       zlib1g-dev \
-    && pecl install mcrypt-1.0.7 \
+    && pecl install mcrypt-1.0.7 xdebug \
     && docker-php-ext-enable mcrypt \
     && docker-php-ext-install -j$(nproc) \
         mysqli \
@@ -28,6 +28,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 #ADD php.ini /usr/local/etc/php/conf.d/40-custom.ini
 ADD php.ini /usr/local/etc/php/conf.d/php.ini
+
+# Конфигурация Xdebug
+RUN docker-php-ext-enable xdebug
 
 RUN addgroup --gid 3000 --system app
 RUN adduser --uid 3000 --system --disabled-login --disabled-password --gid 3000 app

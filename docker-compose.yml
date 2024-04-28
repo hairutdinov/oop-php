@@ -2,12 +2,17 @@ version: '3.2'
 
 services:
   php:
-    image: bulatth/cns-loyalty-php:latest
+    build:
+      context: docker/php
     container_name: $PHP_CONTAINER_NAME
     working_dir: /var/www/html
     volumes:
       - ./web:/var/www/html
       - .env:/var/www/.env
+      - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+    environment:
+      - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
   nginx:
     build: ./docker/nginx/
     container_name: $NGINX_CONTAINER_NAME

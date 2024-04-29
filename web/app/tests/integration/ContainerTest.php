@@ -7,6 +7,7 @@ use App\Cart;
 use App\Container;
 use App\storage\StorageInterface;
 use AppTest\unit\MemoryStorage;
+use Exception;
 
 class ContainerTest extends \PHPUnit\Framework\TestCase
 {
@@ -58,8 +59,18 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
     {
         $this->container->set(StorageInterface::class, MemoryStorage::class);
         $this->container->set(CalculatorInterface::class, $this->container->get('cart.calculator'));
-        $this->container->setShared('cart', Cart::class);
+        $this->container->set('cart', Cart::class);
         $component = $this->container->get('cart');
         $this->assertInstanceOf(Cart::class, $component);
+    }
+
+    public function testSettingWrongInstanceThrowsException()
+    {
+        $this->container->set(StorageInterface::class, MemoryStorage::class);
+        $this->container->set(CalculatorInterface::class, $this->container->get('cart.storage'));
+        $this->container->set('cart', Cart::class);
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Неизвестный компонент: ' . CalculatorInterface::class);
+        $component = $this->container->get('cart');
     }
 }

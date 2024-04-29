@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\calculator\CalculatorInterface;
 use App\storage\StorageInterface;
 
 class Cart
@@ -9,10 +10,12 @@ class Cart
     /** @var CartItem[] */
     private $items;
     private StorageInterface $storage;
+    private CalculatorInterface $calculator;
 
-    public function __construct(StorageInterface $storage)
+    public function __construct(StorageInterface $storage, CalculatorInterface $calculator)
     {
         $this->storage = $storage;
+        $this->calculator = $calculator;
     }
 
     public function getItems()
@@ -47,9 +50,7 @@ class Cart
     public function getCost(): float
     {
         $this->loadItems();
-        return array_reduce($this->items, function ($sum, CartItem $current) {
-            return $sum + $current->getCost();
-        });
+        return $this->calculator->getCost($this->items);
     }
 
     private function loadItems()

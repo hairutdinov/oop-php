@@ -1,6 +1,6 @@
 <?php
 
-namespace AppTest\storage;
+namespace AppTest\unit\storage;
 
 use App\CartItem;
 use App\storage\SessionStorage;

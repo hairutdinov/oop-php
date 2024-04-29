@@ -2,18 +2,20 @@
 
 namespace App;
 
+use ReflectionParameter;
+
 class Container
 {
     private array $definitions = [];
     private array $shared = [];
 
-    public function set(string $id, callable $callback): void
+    public function set(string $id, mixed $value): void
     {
         $this->shared[$id] = null;
-        $this->definitions[] = new ContainerStructure($id, $callback, false);
+        $this->definitions[] = new ContainerStructure($id, $value, false);
     }
 
-    public function setShared(string $id, callable $callback): void
+    public function setShared(string $id, mixed $callback): void
     {
         $this->shared[$id] = null;
         $this->definitions[] = new ContainerStructure($id, $callback, true);
@@ -31,7 +33,25 @@ class Container
 
         /** @var ContainerStructure $component */
         $component = $this->getComponent($id);
-        $result = call_user_func($component->getCallback(), $this);
+        $value = $component->getValue();
+
+        if (is_string($value)) {
+            $reflection = new \ReflectionClass($value);
+            $arguments = [];
+            if ($constructor = $reflection->getConstructor()) {
+                /** @var ReflectionParameter $parameter */
+                foreach ($constructor->getParameters() as $parameter) {
+                    if (($paramType = $parameter->getType())) {
+                        $arguments[] = $this->get($paramType);
+                    }
+                }
+            }
+            $result = $reflection->newInstanceArgs($arguments);
+        } elseif (is_callable($value)) {
+            $result = call_user_func($value, $this);
+        } elseif (is_object($value)) {
+            $result = $value;
+        }
 
         if ($component->isShared()) {
             $this->shared[$id] = $result;

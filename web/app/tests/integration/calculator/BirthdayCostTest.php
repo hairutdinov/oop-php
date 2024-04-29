@@ -8,23 +8,25 @@ use DateTime;
 
 class BirthdayCostTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetCostInBirthday()
+
+    /**
+     * @dataProvider getDates
+     * */
+    public function testGetCost($birthDate, $currentDate, $expectedCost)
     {
         $cost = new BirthdayCost(
             new DummyCost(800),
-            new DateTime('1990-01-01'),
-            new DateTime('2024-01-01'),
+            new DateTime($birthDate),
+            new DateTime($currentDate),
             10);
-        $this->assertEquals(720, $cost->getCost([]));
+        $this->assertEquals($expectedCost, $cost->getCost([]));
     }
 
-    public function testGetCostNotInBirthday()
+    public function getDates()
     {
-        $cost = new BirthdayCost(
-            new DummyCost(800),
-            new DateTime('1990-01-01'),
-            new DateTime('2024-01-02'),
-            10);
-        $this->assertEquals(800, $cost->getCost([]));
+        return [
+            'birthday' => ['1990-01-01', '2024-01-01', 720],
+            'not-a-birthday' => ['1990-01-01', '2024-01-02', 800],
+        ];
     }
 }

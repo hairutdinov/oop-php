@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Exception;
 use ReflectionParameter;
 
 class Container
@@ -15,10 +16,10 @@ class Container
         $this->definitions[] = new ContainerStructure($id, $value, false);
     }
 
-    public function setShared(string $id, mixed $callback): void
+    public function setShared(string $id, mixed $value): void
     {
         $this->shared[$id] = null;
-        $this->definitions[] = new ContainerStructure($id, $callback, true);
+        $this->definitions[] = new ContainerStructure($id, $value, true);
     }
 
     public function get(string $id)
@@ -27,22 +28,32 @@ class Container
             return $this->shared[$id];
         }
 
-        if (!$this->componentRegistered($id)) {
-            throw new \Exception('Неизвестный компонент: ' . $id);
+
+        if ($this->componentRegistered($id)) {
+            /** @var ContainerStructure $component */
+            $component = $this->getComponent($id);
+            $id = $component->getId();
+            $value = $component->getValue();
+            $shared = $component->isShared();
+        } else {
+            $value = $id;
+            $shared = false;
         }
 
-        /** @var ContainerStructure $component */
-        $component = $this->getComponent($id);
-        $value = $component->getValue();
-
-        if (is_string($value)) {
+        if (is_string($value) && class_exists($value)) {
             $reflection = new \ReflectionClass($value);
             $arguments = [];
             if ($constructor = $reflection->getConstructor()) {
                 /** @var ReflectionParameter $parameter */
                 foreach ($constructor->getParameters() as $parameter) {
                     if (($paramType = $parameter->getType())) {
-                        $arguments[] = $this->get($paramType);
+                        if ($paramType->isBuiltin()) {
+                            $arguments[] = null;
+                        } else {
+                            $arguments[] = $this->get($paramType);
+                        }
+                    } else {
+                        $arguments[] = null;
                     }
                 }
             }
@@ -53,7 +64,11 @@ class Container
             $result = $value;
         }
 
-        if ($component->isShared()) {
+        if (!isset($result)) {
+            throw new Exception('Неизвестный компонент: ' . $id);
+        }
+
+        if ($shared) {
             $this->shared[$id] = $result;
         }
 

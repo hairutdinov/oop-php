@@ -5,13 +5,13 @@ namespace App;
 class ContainerStructure
 {
     private string $id;
-    private $callback;
+    private $value;
     private bool $shared;
 
-    public function __construct(string $id, callable $callback, bool $shared)
+    public function __construct(string $id, mixed $value, bool $shared)
     {
-        $this->id = $id;
-        $this->callback = $callback;
+        $this->id     = $id;
+        $this->value  = $value;
         $this->shared = $shared;
     }
 
@@ -23,9 +23,9 @@ class ContainerStructure
     /**
      * @return callable
      */
-    public function getCallback(): callable
+    public function getValue(): mixed
     {
-        return $this->callback;
+        return $this->value;
     }
 
     /**

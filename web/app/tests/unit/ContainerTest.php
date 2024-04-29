@@ -34,9 +34,9 @@ class B
 
 class C
 {
-    private ?int $n;
+    private int $n;
 
-    public function __construct(?int $n)
+    public function __construct(int $n)
     {
         $this->n = $n;
     }
@@ -108,10 +108,11 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Class A method', $component->method());
     }
 
-    public function testAutoLoadUnregisteredConstructorParamTypeWithNull()
+    public function testRegisterBuiltInTypeIntAsComponent()
     {
+        $this->container->set('int', function (){return 7;});
         $component = $this->container->get(C::class);
         $this->assertInstanceOf(C::class, $component);
-        $this->assertEquals('Class C method returns number: ', $component->method());
+        $this->assertEquals('Class C method returns number: 7', $component->method());
     }
 }

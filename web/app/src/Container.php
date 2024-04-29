@@ -47,11 +47,7 @@ class Container
                 /** @var ReflectionParameter $parameter */
                 foreach ($constructor->getParameters() as $parameter) {
                     if (($paramType = $parameter->getType())) {
-                        if ($paramType->isBuiltin()) {
-                            $arguments[] = null;
-                        } else {
-                            $arguments[] = $this->get($paramType);
-                        }
+                        $arguments[] = $this->get($paramType);
                     } else {
                         $arguments[] = null;
                     }

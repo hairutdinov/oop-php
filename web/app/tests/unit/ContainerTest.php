@@ -39,9 +39,8 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         $this->container->setShared('test', function (Container $container) {
             return new StdClass();
         });
-        $firstInstance = $this->container->get('test');
-        $secondInstance = $this->container->get('test');
-        $this->assertInstanceOf(StdClass::class, $firstInstance);
-        $this->assertSame($firstInstance, $secondInstance);
+        $component = $this->container->get('test');
+        $this->assertInstanceOf(StdClass::class, $component);
+        $this->assertSame($component, $this->container->get('test'));
     }
 }

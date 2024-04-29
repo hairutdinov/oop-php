@@ -4,6 +4,7 @@ namespace AppTest\unit;
 
 use App\Container;
 use Exception;
+use stdClass;
 
 class ContainerTest extends \PHPUnit\Framework\TestCase
 {
@@ -25,8 +26,22 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
     public function testGettingComponent()
     {
         $this->container->set('test', function (Container $container) {
-            return 1;
+            return new StdClass();
         });
-        $this->assertEquals(1, $this->container->get('test'));
+        $firstInstance = $this->container->get('test');
+        $this->assertInstanceOf(StdClass::class, $firstInstance);
+        $secondInstance = $this->container->get('test');
+        $this->assertNotSame($firstInstance, $secondInstance);
+    }
+
+    public function testGettingSharedComponent()
+    {
+        $this->container->setShared('test', function (Container $container) {
+            return new StdClass();
+        });
+        $firstInstance = $this->container->get('test');
+        $secondInstance = $this->container->get('test');
+        $this->assertInstanceOf(StdClass::class, $firstInstance);
+        $this->assertSame($firstInstance, $secondInstance);
     }
 }

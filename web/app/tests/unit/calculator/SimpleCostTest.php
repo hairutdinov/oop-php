@@ -15,4 +15,10 @@ class SimpleCostTest extends \PHPUnit\Framework\TestCase
             new CartItem(2, 2, 300),
         ]));
     }
+
+    public function testGetCostReturnsZeroForEmptyItemsList()
+    {
+        $calculator = new SimpleCost();
+        $this->assertNull($calculator->getCost([]));
+    }
 }

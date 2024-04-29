@@ -39,7 +39,7 @@ class CartItem
         return $this->price;
     }
 
-    public function getCost(): float
+    public function getCost(): ?float
     {
         return $this->price * $this->count;
     }

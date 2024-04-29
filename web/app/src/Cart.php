@@ -47,7 +47,7 @@ class Cart
         $this->saveItems();
     }
 
-    public function getCost(): float
+    public function getCost(): ?float
     {
         $this->loadItems();
         return $this->calculator->getCost($this->items);

@@ -8,7 +8,7 @@ interface CalculatorInterface
 {
     /**
      * @param CartItem[] $items
-     * @return float|int
+     * @return float|int|null
      * */
     public function getCost(array $items); 
 }

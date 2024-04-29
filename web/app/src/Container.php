@@ -76,23 +76,17 @@ class Container
         if (empty($this->definitions)) {
             return [];
         }
-        return array_map(function (ContainerStructure $item) {
-            return $item->getId();
-        }, $this->definitions);
+        return array_map(fn (ContainerStructure $item) => $item->getId(), $this->definitions);
     }
 
     public function componentRegistered(string $id): bool
     {
-        return in_array(
-            $id,
-            $this->getIds()
-        );
+        return in_array($id, $this->getIds());
     }
 
     private function getComponent(string $id): ?ContainerStructure
     {
-        $index = array_search($id, $this->getIds());
-        if ($index === false) {
+        if (($index = array_search($id, $this->getIds())) === false) {
             return null;
         }
         return $this->definitions[$index];

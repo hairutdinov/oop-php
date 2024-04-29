@@ -1,6 +1,6 @@
 <?php
 
-namespace AppTest\integration;
+namespace AppTest\unit;
 
 use App\Container;
 use Exception;

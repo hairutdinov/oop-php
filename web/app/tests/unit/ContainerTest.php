@@ -110,7 +110,7 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
 
     public function testRegisterBuiltInTypeIntAsComponent()
     {
-        $this->container->set('int', function (){return 7;});
+        $this->container->set('int', fn () => 7);
         $component = $this->container->get(C::class);
         $this->assertInstanceOf(C::class, $component);
         $this->assertEquals('Class C method returns number: 7', $component->method());

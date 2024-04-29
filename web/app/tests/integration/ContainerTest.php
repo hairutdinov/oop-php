@@ -16,23 +16,17 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->container = new Container();
-        $this->container->set('cart.storage', function (Container $container) {
-            return new MemoryStorage();
-        });
-        $this->container->set('cart.calculator', function (Container $container) {
-            return new DummyCost(100);
-        });
+        $this->container->set('cart.storage', fn (Container $container) => new MemoryStorage());
+        $this->container->set('cart.calculator', fn (Container $container) => new DummyCost(100));
         parent::setUp();
     }
 
     public function testGettingCartComponent()
     {
-        $this->container->set('cart', function (Container $container) {
-            return new Cart(
-                $this->container->get('cart.storage'),
-                $this->container->get('cart.calculator'),
-            );
-        });
+        $this->container->set('cart', fn (Container $container) => new Cart(
+            $this->container->get('cart.storage'),
+            $this->container->get('cart.calculator'),
+        ));
         $this->assertInstanceOf(MemoryStorage::class, $this->container->get('cart.storage'));
         $this->assertInstanceOf(DummyCost::class, $this->container->get('cart.calculator'));
         $component = $this->container->get('cart');
@@ -42,12 +36,10 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
 
     public function testGettingSharedCartComponent()
     {
-        $this->container->setShared('cart', function (Container $container) {
-            return new Cart(
-                $this->container->get('cart.storage'),
-                $this->container->get('cart.calculator'),
-            );
-        });
+        $this->container->setShared('cart', fn (Container $container) => new Cart(
+            $this->container->get('cart.storage'),
+            $this->container->get('cart.calculator'),
+        ));
         $this->assertInstanceOf(MemoryStorage::class, $this->container->get('cart.storage'));
         $this->assertInstanceOf(DummyCost::class, $this->container->get('cart.calculator'));
         $component = $this->container->get('cart');

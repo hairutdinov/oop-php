@@ -56,7 +56,7 @@ class Container
             $result = $reflection->newInstanceArgs($arguments);
         } elseif (is_callable($value)) {
             $result = call_user_func($value, $this);
-        } elseif (is_object($value)) {
+        } elseif ($value instanceof $id) {
             $result = $value;
         }
 

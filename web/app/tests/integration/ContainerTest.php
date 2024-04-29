@@ -2,8 +2,10 @@
 
 namespace AppTest\integration;
 
+use App\calculator\CalculatorInterface;
 use App\Cart;
 use App\Container;
+use App\storage\StorageInterface;
 use AppTest\unit\MemoryStorage;
 
 class ContainerTest extends \PHPUnit\Framework\TestCase
@@ -50,5 +52,14 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         $component = $this->container->get('cart');
         $this->assertInstanceOf(Cart::class, $component);
         $this->assertSame($component, $this->container->get('cart'));
+    }
+
+    public function testGettingComponentByClassName()
+    {
+        $this->container->set(StorageInterface::class, MemoryStorage::class);
+        $this->container->set(CalculatorInterface::class, $this->container->get('cart.calculator'));
+        $this->container->setShared('cart', Cart::class);
+        $component = $this->container->get('cart');
+        $this->assertInstanceOf(Cart::class, $component);
     }
 }

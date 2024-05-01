@@ -5,7 +5,7 @@ namespace App\arrayAccess;
 use JetBrains\PhpStorm\Internal\LanguageLevelTypeAware;
 use JetBrains\PhpStorm\Internal\TentativeType;
 
-class PhoneCollection implements \ArrayAccess
+class PhoneCollection implements \ArrayAccess, \Countable
 {
     private array $phones;
 
@@ -35,6 +35,9 @@ class PhoneCollection implements \ArrayAccess
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
+        if ($this->has($value)) {
+            throw new \DomainException('Такой телефон уже есть в коллекции!');
+        }
         if (is_null($offset)) {
             $this->phones[] = $value;
         } else {
@@ -50,5 +53,15 @@ class PhoneCollection implements \ArrayAccess
         if ($this->offsetExists($offset)) {
             unset($this->phones[$offset]);
         }
+    }
+
+    public function has(mixed $value)
+    {
+        return in_array($value, $this->phones);
+    }
+
+    public function count(): int
+    {
+        return count($this->phones);
     }
 }

@@ -41,4 +41,16 @@ class ArrayAccessTest extends TestCase
         $this->assertNull($this->phoneCollection[0]);
         unset($this->phoneCollection[10]);
     }
+
+    public function testCountMethod()
+    {
+        $this->assertCount(3, $this->phoneCollection);
+    }
+
+    public function testCollectionThrowingPhoneExistsException()
+    {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Такой телефон уже есть в коллекции!');
+        $this->phoneCollection[] = 1;
+    }
 }
